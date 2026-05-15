@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-8 flex justify-between items-center">
+    <div>
+        <h1 class="text-3xl font-extrabold text-slate-800">Meu Painel</h1>
+        <p class="text-slate-600 mt-1">Gerencie suas obras e resíduos descartados.</p>
+    </div>
+    
+    {% if user.perfil.tipo == 'GERADOR' or not user.perfil %}
+    <a href="{% url 'cadastrar_obra' %}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg font-medium transition shadow-md flex items-center gap-2">
+        <span class="text-xl leading-none">+</span> Nova Obra
+    </a>
+    {% endif %}
+</div>
+
+<div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+    <h2 class="text-xl font-bold mb-4 text-slate-800">Minhas Obras Ativas</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for obra in obras %}
+        <div class="p-5 border border-slate-200 bg-slate-50 rounded-xl hover:shadow-md transition flex flex-col justify-between">
+            <div>
+                <p class="font-bold text-lg text-slate-800 mb-2 line-clamp-2">{{ obra.descricao }}</p>
+                <span class="inline-block bg-emerald-100 text-emerald-800 py-1 px-3 rounded-full text-sm font-semibold mb-4">
+                    {{ obra.tipo_residuo }}
+                </span>
+            </div>
+            <div class="flex justify-between items-center pt-4 border-t border-slate-200 text-sm">
+                <span class="text-slate-500">Status: <span class="text-emerald-600 font-bold">{{ obra.status }}</span></span>
+                <a href="{% url 'detalhe_obra' obra.id %}" class="text-emerald-600 font-medium hover:text-emerald-800 transition">Ver detalhes &rarr;</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-1 md:col-span-2 text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+            <p class="text-slate-500 font-medium text-lg mb-2">Nenhum registro encontrado.</p>
+            
+            {% if user.perfil.tipo == 'GERADOR' or not user.perfil %}
+            <a href="{% url 'cadastrar_obra' %}" class="text-emerald-600 font-bold hover:underline">Comece registrando sua primeira obra</a>
+            {% else %}
+            <a href="{% url 'index' %}" class="text-emerald-600 font-bold hover:underline">Buscar obras disponíveis para coleta</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

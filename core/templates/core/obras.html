@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load l10n %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<div class="mb-8">
+    <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Todas as Obras</h1>
+    <p class="text-slate-500 mt-2 mb-6">Encontre e acompanhe as obras disponíveis para coleta.</p>
+
+    <form method="GET" action="{% url 'lista_obras' %}" class="max-w-2xl">
+        <div class="relative flex items-center bg-white rounded-lg border border-slate-200 shadow-sm focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-emerald-500 overflow-hidden">
+            <div class="px-4 flex items-center justify-center text-slate-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            
+            <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar por tipo de resíduo, endereço ou descrição..."
+                   class="flex-1 py-3 focus:outline-none text-slate-700 bg-transparent placeholder-slate-400 border-none ring-0">
+            
+            <div class="px-2">
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-md text-sm font-bold transition">
+                    Buscar
+                </button>
+            </div>
+        </div>
+        
+        {% if query %}
+        <div class="mt-2 flex justify-between items-center px-1">
+            <span class="text-sm text-slate-500">Resultados para: <strong class="text-slate-700">{{ query }}</strong></span>
+            <a href="{% url 'lista_obras' %}" class="text-sm font-bold text-red-500 hover:text-red-700 hover:underline">Limpar busca</a>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    
+    <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-slate-200 overflow-y-auto" style="max-height: 600px;">
+        <h2 class="text-xl font-bold mb-4 text-slate-800">Obras Disponíveis</h2>
+        
+        <div class="space-y-4">
+            {% for obra in obras %}
+            <div class="p-5 border border-slate-200 bg-slate-50 rounded-lg flex flex-col gap-3 hover:shadow-md hover:border-emerald-400 transition cursor-pointer group"
+                 onclick="focusObra('{{ obra.latitude|default_if_none:"None" }}', '{{ obra.longitude|default_if_none:"None" }}')">
+                
+                <div>
+                    <p class="font-bold text-lg text-slate-800 group-hover:text-emerald-700 transition line-clamp-2">{{ obra.descricao }}</p>
+                    {% if obra.endereco %}
+                    <p class="text-xs text-slate-500 mt-1 mb-2"><span class="font-semibold text-slate-700">Local:</span> {{ obra.endereco }}</p>
+                    {% endif %}
+                    <div class="flex items-center gap-3 mt-1 text-sm text-slate-500">
+                        <span class="bg-emerald-100 text-emerald-800 py-1 px-2 rounded-md font-bold uppercase text-[10px]">{{ obra.tipo_residuo }}</span>
+                        <span><span class="text-slate-600 font-semibold text-xs">{{ obra.status }}</span></span>
+                    </div>
+                </div>
+                
+                <a href="{% url 'detalhe_obra' obra.id %}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold transition text-center w-full text-sm shadow-sm">
+                    Ver Obra
+                </a>
+            </div>
+            {% empty %}
+            <div class="text-center py-10 bg-white border border-dashed border-slate-200 rounded-lg">
+                <p class="text-slate-500 font-medium text-sm">
+                    {% if query %}
+                    Nenhuma obra encontrada para "{{ query }}".
+                    {% else %}
+                    Nenhuma obra registrada no momento.
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="lg:col-span-2">
+        <div id="map" class="w-full h-[600px] rounded-xl shadow-sm border border-slate-200 bg-slate-100 z-0 relative"></div>
+    </div>
+</div>
+
+<script>
+    let map;
+    
+    const emeraldIcon = L.divIcon({
+        html: `<svg class="w-8 h-8 text-emerald-600 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`,
+        className: "", iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -32]
+    });
+
+    function initMap() {
+        if (!document.getElementById('map')) return;
+
+        map = L.map('map').setView([-15.7938, -47.8827], 4);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let bounds = [];
+        let hasMarkers = false;
+
+        {% for obra in obras %}
+            {% if obra.latitude and obra.longitude %}
+                {
+                    let latStr = "{{ obra.latitude }}".replace(',', '.');
+                    let lngStr = "{{ obra.longitude }}".replace(',', '.');
+                    let lat = parseFloat(latStr);
+                    let lng = parseFloat(lngStr);
+                    
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        hasMarkers = true;
+                        let marker = L.marker([lat, lng], {icon: emeraldIcon}).addTo(map);
+                        marker.bindPopup(`<div class="p-1"><strong>{{ obra.tipo_residuo|escapejs }}</strong><br><a href="{% url 'detalhe_obra' obra.id %}" class="text-emerald-600 font-bold hover:underline">Ver Detalhes</a></div>`);
+                        bounds.push([lat, lng]);
+                    }
+                }
+            {% endif %}
+        {% endfor %}
+
+        if (hasMarkers && bounds.length > 0) {
+            map.fitBounds(bounds, {padding: [50, 50]});
+        }
+    }
+
+    function focusObra(latStr, lngStr) {
+        if (map && latStr && lngStr && latStr !== 'None' && lngStr !== 'None') {
+            let lat = parseFloat(String(latStr).replace(',', '.'));
+            let lng = parseFloat(String(lngStr).replace(',', '.'));
+            if (!isNaN(lat) && !isNaN(lng)) {
+                map.setView([lat, lng], 16);
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initMap);
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-10 rounded-xl shadow-md border border-slate-200 mt-8 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-3 bg-emerald-500"></div>
+    
+    <div class="text-center mb-8 pt-4">
+        <h1 class="text-3xl font-black text-slate-800 tracking-tight">Comprovante de Destinação</h1>
+        <p class="text-slate-500 mt-1 font-medium">Logística Reversa de Resíduos da Construção Civil</p>
+    </div>
+
+    <div class="space-y-6">
+        <div class="flex justify-between items-center bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <span class="text-slate-500 font-bold uppercase text-sm tracking-wider">Token da Transação</span>
+            <span class="text-2xl font-mono font-bold text-slate-800">{{ acordo.comprovante_token }}</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+            <div>
+                <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Gerador</p>
+                <p class="text-lg font-semibold text-slate-800">{{ acordo.obra.gerador.username }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Centro de Reciclagem</p>
+                <p class="text-lg font-semibold text-slate-800">{{ acordo.centro.username }}</p>
+            </div>
+        </div>
+
+        <div>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Descrição do Material</p>
+            <p class="text-slate-800 font-medium">{{ acordo.obra.descricao }}</p>
+            <span class="inline-block mt-2 bg-emerald-100 text-emerald-800 py-1 px-3 rounded text-sm font-bold">
+                {{ acordo.obra.tipo_residuo }}
+            </span>
+        </div>
+
+        <div class="border-t border-slate-200 pt-6 flex justify-between items-end">
+            <div>
+                <p class="text-sm font-bold text-emerald-600">Material Recebido com Sucesso</p>
+                <p class="text-xs text-slate-400">Validação digital efetuada pelo centro recebedor.</p>
+            </div>
+            <div class="text-right">
+                <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Custo do Frete</p>
+                <p class="text-3xl font-black text-slate-800">R$ {{ acordo.valor_transporte }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-10 text-center">
+        <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-6 rounded-lg transition shadow-md print:hidden">
+            Imprimir Comprovante
+        </button>
+    </div>
+</div>
+{% endblock %}
