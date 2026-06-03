@@ -25,7 +25,7 @@
             <label class="block text-sm font-semibold text-slate-700 mb-2">Endereço Completo</label>
             <div class="flex gap-2 mb-4">
                 {{ form.endereco }}
-                <button type="button" onclick="buscarEndereco()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 rounded-lg transition whitespace-nowrap">
+                <button type="button" onclick="buscarEndereco()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 rounded-lg cursor-pointer transition whitespace-nowrap">
                     Buscar
                 </button>
             </div>
@@ -40,7 +40,7 @@
 
         <div class="flex gap-4 pt-4">
             <a href="{% url 'painel' %}" class="w-1/3 text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-4 rounded-lg transition">Cancelar</a>
-            <button type="submit" class="w-2/3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">Publicar Obra</button>
+            <button type="submit" class="w-2/3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg cursor-pointer transition shadow-md">Publicar Obra</button>
         </div>
     </form>
 </div>
