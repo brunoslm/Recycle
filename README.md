@@ -3,7 +3,9 @@
 ## 🛠️ Tecnologias Utilizadas
 * **Backend:** Python + Django
 * **Frontend:** Tailwind CSS, HTML/Templates do Django
-* **Mapas:** Leaflet.js (Mapas interativos e geolocalização)
+* **Mapas e Geolocalização:** * **Leaflet.js:** Biblioteca interativa usada para renderizar o mapa na tela e manipular os pinos.
+  * **ViaCEP:** API utilizada para autocompletar os campos de endereço (Rua, Bairro, Cidade, Estado) a partir do CEP digitado.
+  * **Nominatim (OpenStreetMap):** A inteligência que transforma o texto do endereço em coordenadas geográficas (Latitude e Longitude).
 * **Banco de Dados:** SQLite (padrão do Django para desenvolvimento) ->> Depois vamos mudar para PostgreSQL
 
 ---
