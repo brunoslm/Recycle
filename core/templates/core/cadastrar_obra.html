@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-slate-200 mb-8">
     <h2 class="text-2xl font-bold mb-6 text-slate-800">Registrar Nova Obra</h2>
     <form method="post" class="space-y-6">
         {% csrf_token %}
@@ -22,25 +22,48 @@
         <div class="border-t border-slate-100 pt-6">
             <h3 class="text-lg font-bold text-slate-800 mb-4">Localização da Caçamba</h3>
             
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Endereço Completo</label>
-            <div class="flex gap-2 mb-4">
-                {{ form.endereco }}
-                <button type="button" onclick="buscarEndereco()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 rounded-lg cursor-pointer transition whitespace-nowrap">
-                    Buscar
-                </button>
+            <div class="mb-4 max-w-xs">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">CEP</label>
+                <input type="text" id="id_cep" maxlength="9" placeholder="00000-000"
+                       class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm text-slate-700 bg-white placeholder-slate-400">
+                <div id="cep-status-container" class="max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+                    <p id="cep-status" class="text-[11px] font-bold mt-1"></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="md:col-span-3">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Rua e Número (Complete com o número)</label>
+                    {{ form.endereco }}
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Bairro</label>
+                    {{ form.bairro }}
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Cidade</label>
+                    {{ form.cidade }}
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Estado</label>
+                    {{ form.estado }}
+                </div>
             </div>
             
-            <div id="map-preview" class="w-full h-64 rounded-lg border border-slate-200 bg-slate-100 mb-4 z-0"></div>
-            
-            <p id="geo-status" class="text-xs text-slate-500 font-medium">O pino aparecerá no mapa acima após a busca.</p>
-            
-            {{ form.latitude }}
-            {{ form.longitude }}
+            <div id="map-preview" class="w-full h-64 rounded-lg border border-slate-200 bg-slate-100 mb-2 z-0 relative"></div>
+            <p id="geo-status" class="text-xs text-slate-500 font-semibold bg-slate-50 p-2 rounded border border-slate-100">
+                💡 O mapa busca o ponto real automaticamente. Se precisar ajustar, você pode <strong>clicar no mapa</strong> ou <strong>arrastar o pino</strong>.
+            </p>
+
+            <div class="hidden">
+                {{ form.latitude }}
+                {{ form.longitude }}
+            </div>
         </div>
 
         <div class="flex gap-4 pt-4">
             <a href="{% url 'painel' %}" class="w-1/3 text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-4 rounded-lg transition">Cancelar</a>
-            <button type="submit" class="w-2/3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg cursor-pointer transition shadow-md">Publicar Obra</button>
+            <button type="submit" class="w-2/3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">Publicar Obra</button>
         </div>
     </form>
 </div>
@@ -48,43 +71,138 @@
 <script>
     let map, marker;
 
-    // Inicializa o mapa de preview
     function initPreviewMap() {
         map = L.map('map-preview').setView([-15.7938, -47.8827], 4);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        map.on('click', function(e) {
+            posicionarPino(e.latlng.lat, e.latlng.lng);
+        });
     }
 
-    function buscarEndereco() {
-        const endereco = document.getElementById('id_endereco').value;
-        const status = document.getElementById('geo-status');
+    document.addEventListener("DOMContentLoaded", function() {
+        initPreviewMap();
 
-        if (!endereco) return;
+        const inputCep = document.getElementById('id_cep');
+        const inputEndereco = document.getElementById('id_endereco');
+        const inputBairro = document.getElementById('id_bairro');
+        const inputCidade = document.getElementById('id_cidade');
+        const inputEstado = document.getElementById('id_estado');
+        const containerStatus = document.getElementById('cep-status-container');
+        const cepStatus = document.getElementById('cep-status');
 
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`)
-            .then(r => r.json())
-            .then(data => {
-                if (data.length > 0) {
-                    const lat = data[0].lat;
-                    const lon = data[0].lon;
+        ['id_bairro', 'id_cidade', 'id_estado'].forEach(id => {
+            let el = document.getElementById(id);
+            if(el) {
+                el.setAttribute('readonly', true);
+                el.classList.add('bg-slate-50', 'text-slate-500', 'cursor-not-allowed', 'focus:ring-0');
+            }
+        });
 
-                    // Atualiza campos escondidos
-                    document.getElementById('id_latitude').value = lat;
-                    document.getElementById('id_longitude').value = lon;
+        inputCep.addEventListener('input', function() {
+            let v = this.value.replace(/\D/g, "");
+            if (v.length > 5) {
+                v = v.substring(0, 5) + "-" + v.substring(5, 8);
+            }
+            this.value = v;
 
-                    // Move o mapa e o PINO
-                    map.setView([lat, lon], 16);
-                    if (marker) map.removeLayer(marker);
-                    marker = L.marker([lat, lon]).addTo(map);
+            if (v.length === 9) {
+                buscarCEP(v.replace("-", ""));
+            }
+        });
+
+        function buscarCEP(cep) {
+            cepStatus.innerText = "Buscando CEP...";
+            cepStatus.className = "text-[11px] text-blue-500 font-bold mt-1";
+            containerStatus.style.maxHeight = "40px";
+            containerStatus.style.opacity = "1";
+
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erro) {
+                        cepStatus.innerText = "⚠ CEP não encontrado.";
+                        cepStatus.className = "text-[11px] text-red-500 font-bold mt-1";
+                        return;
+                    }
+
+                    inputEndereco.value = data.logradouro;
+                    inputBairro.value = data.bairro;
+                    inputCidade.value = data.localidade;
+                    inputEstado.value = data.uf;
+
+                    cepStatus.innerText = "✓ CEP válido!";
+                    cepStatus.className = "text-[11px] text-emerald-600 font-bold mt-1";
+
+                    inputEndereco.focus();
                     
-                    status.textContent = "✓ Localização confirmada no mapa!";
-                    status.className = "text-xs text-emerald-600 font-bold";
-                } else {
-                    status.textContent = "⚠ Endereço não encontrado.";
-                    status.className = "text-xs text-red-500 font-bold";
+                    // Busca inicial contendo o bairro para fechar o cerco na região correta
+                    let queryInicial = `${data.logradouro} - ${data.bairro}, ${data.localidade} - ${data.uf}`;
+                    let fallbackInicial = `${data.logradouro}, ${data.localidade} - ${data.uf}`;
+                    
+                    atualizarMapaPorTextoLivre(queryInicial, fallbackInicial);
+
+                    setTimeout(() => {
+                        containerStatus.style.maxHeight = "0px";
+                        containerStatus.style.opacity = "0";
+                    }, 2000);
+                })
+                .catch(() => {
+                    cepStatus.innerText = "⚠ Erro ao buscar CEP.";
+                    cepStatus.className = "text-[11px] text-red-500 font-bold mt-1";
+                });
+        }
+
+        // Quando o usuário terminar de digitar o número da casa
+        inputEndereco.addEventListener('blur', function() {
+            if(this.value && inputCidade.value) {
+                // Pega a rua com o número digitado + bairro + cidade + estado
+                let queryCompleta = `${this.value} - ${inputBairro.value}, ${inputCidade.value} - ${inputEstado.value}`;
+                // Fallback caso o OpenStreetMap não reconheça a demarcação exata daquele bairro
+                let fallbackCompleta = `${this.value}, ${inputCidade.value} - ${inputEstado.value}`;
+                
+                atualizarMapaPorTextoLivre(queryCompleta, fallbackCompleta);
+            }
+        });
+
+        // Modificado para aceitar um endereço alternativo (fallback) de segurança
+        function atualizarMapaPorTextoLivre(enderecoTexto, fallbackTexto = null) {
+            let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(enderecoTexto)}&limit=1`;
+            
+            fetch(url, {
+                headers: { 'User-Agent': 'RecycleAppDjango/1.0' }
+            })
+            .then(r => r.json())
+            .then(geoData => {
+                if (geoData.length > 0) {
+                    posicionarPino(geoData[0].lat, geoData[0].lon);
+                } else if (fallbackTexto) {
+                    // Se falhar com o bairro, tenta a busca direta sem ele para garantir o posicionamento
+                    atualizarMapaPorTextoLivre(fallbackTexto);
                 }
             });
-    }
+        }
 
-    document.addEventListener('DOMContentLoaded', initPreviewMap);
+        function posicionarPino(lat, lon) {
+            document.getElementById('id_latitude').value = lat;
+            document.getElementById('id_longitude').value = lon;
+
+            map.setView([lat, lon], 17);
+
+            if (marker) {
+                marker.setLatLng([lat, lon]);
+            } else {
+                marker = L.marker([lat, lon], { draggable: true }).addTo(map);
+                
+                marker.on('dragend', function() {
+                    let position = marker.getLatLng();
+                    document.getElementById('id_latitude').value = position.lat;
+                    document.getElementById('id_longitude').value = position.lng;
+                });
+            }
+        }
+    });
 </script>
 {% endblock %}
