@@ -59,7 +59,7 @@ class Acordo(models.Model):
     pago = models.BooleanField(default=False)
     status = models.CharField(max_length=25, choices=STATUS_ACORDO, default='PROPOSTA')
     
-    # Gera comprovante, conforme o diagrama BPMN
+    # Gerado apenas no final do fluxo, conforme o diagrama
     comprovante_token = models.CharField(max_length=100, unique=True, blank=True, null=True)
 
     def __str__(self):
