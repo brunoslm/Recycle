@@ -4,7 +4,7 @@
 <div class="mb-8 flex justify-between items-center">
     <div>
         <h1 class="text-3xl font-extrabold text-slate-800">Meu Painel</h1>
-        <p class="text-slate-600 mt-1">Gerencie suas obras e resíduos descartados.</p>
+        <p class="text-slate-600 mt-1">Gerencie suas obras e materiais disponíveis para venda.</p>
     </div>
     
     {% if user.perfil.tipo == 'GERADOR' or not user.perfil %}
@@ -27,7 +27,8 @@
                 </span>
             </div>
             <div class="flex justify-between items-center pt-4 border-t border-slate-200 text-sm">
-                <span class="text-slate-500">Status: <span class="text-emerald-600 font-bold">{{ obra.status }}</span></span>
+                {# AJUSTADO: get_status_display para exibir o texto formatado do choices #}
+                <span class="text-slate-500">Status da Obra: <span class="text-emerald-600 font-bold">{{ obra.get_status_display }}</span></span>
                 <a href="{% url 'detalhe_obra' obra.id %}" class="text-emerald-600 font-medium hover:text-emerald-800 transition">Ver detalhes &rarr;</a>
             </div>
         </div>
@@ -38,7 +39,7 @@
             {% if user.perfil.tipo == 'GERADOR' or not user.perfil %}
             <a href="{% url 'cadastrar_obra' %}" class="text-emerald-600 font-bold hover:underline">Comece registrando sua primeira obra</a>
             {% else %}
-            <a href="{% url 'index' %}" class="text-emerald-600 font-bold hover:underline">Buscar obras disponíveis para coleta</a>
+            <a href="{% url 'index' %}" class="text-emerald-600 font-bold hover:underline">Buscar obras disponíveis para compra</a>
             {% endif %}
         </div>
         {% endfor %}
