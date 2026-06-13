@@ -11,8 +11,15 @@ urlpatterns = [
     path('obras/', views.lista_obras, name='lista_obras'),
     path('obra/<int:id>/', views.detalhe_obra, name='detalhe_obra'),
     path('obra/<int:id>/propor-acordo/', views.propor_acordo, name='propor_acordo'),
-    path('acordo/<int:id>/aceitar/', views.aceitar_acordo, name='aceitar_acordo'),
-    path('acordo/<int:id>/entregar/', views.confirmar_entrega, name='confirmar_entrega'),
+    
+    # Rotas do fluxo (BPMN do Figma)
+    path('acordo/<int:id>/responder/<str:acao>/', views.responder_proposta, name='responder_proposta'),
+    path('acordo/<int:id>/pagamento/', views.escolher_pagamento, name='escolher_pagamento'),
+    path('acordo/<int:id>/validar-pagamento/', views.simular_pagamento_online, name='simular_pagamento_online'),
+    path('acordo/<int:id>/enviar/', views.enviar_material, name='enviar_material'),
+    path('acordo/<int:id>/recolher/', views.recolher_material, name='recolher_material'),
+    
+    # Comprovante
     path('comprovante/<str:token>/', views.comprovante, name='comprovante'),
     
     # Rotas de Autenticação
