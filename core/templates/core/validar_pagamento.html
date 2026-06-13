@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-lg border border-slate-200 mt-10 text-center">
+    <div class="flex items-center justify-center gap-2 mb-4">
+        <span class="text-2xl">🪙</span>
+        <h2 class="text-2xl font-black text-slate-800 tracking-tight">Pagamento ao Gerador</h2>
+    </div>
+    
+    <p class="text-slate-500 text-sm mb-6">
+        Você está adquirindo os materiais desta obra. Escaneie o QR Code abaixo para transferir o valor acordado diretamente para a conta do Gerador.
+    </p>
+
+    <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 flex flex-col items-center justify-center relative mb-6">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=RecyclePixSimulationValue{{ acordo.valor_transporte }}" 
+             alt="QR Code PIX" 
+             class="w-44 h-44 border-4 border-white shadow-xs rounded-lg">
+        
+        <div class="mt-4 text-center">
+            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Valor a transferir</p>
+            <p class="text-3xl font-black text-emerald-600 mt-1">R$ {{ acordo.valor_transporte }}</p>
+        </div>
+    </div>
+
+    <div class="mb-6 text-left">
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Pix Copia e Cola do Gerador</label>
+        <div class="flex gap-2">
+            <input type="text" readonly id="pixCode" 
+                   value="00020101021226830014br.gov.bcb.pix25610008recycleapp{{ acordo.id }}540510.005802BR5913Recycle%20App6009Recife62070503***"
+                   class="flex-1 bg-slate-50 border border-slate-200 text-xs font-mono p-3 rounded-lg text-slate-600 focus:outline-none select-all truncate">
+            <button onclick="copiarPix()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 rounded-lg font-medium text-xs transition whitespace-nowrap active:scale-95">
+                Copiar
+            </button>
+        </div>
+        <span id="copyAlert" class="text-[11px] text-emerald-600 font-bold mt-1 hidden block">✓ Código copiado para a área de transferência!</span>
+    </div>
+
+    <div id="status-container" class="border-t border-slate-100 pt-6">
+        <div class="flex items-center justify-center gap-3 text-slate-600 font-medium text-sm">
+            <svg class="animate-spin h-5 w-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span id="status-text">Processando transferência bancária...</span>
+        </div>
+    </div>
+
+    <form method="post" id="paymentForm" class="hidden">
+        {% csrf_token %}
+    </form>
+</div>
+
+<script>
+    function copiarPix() {
+        const copyText = document.getElementById("pixCode");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+        
+        const alertMsg = document.getElementById("copyAlert");
+        alertMsg.classList.remove("hidden");
+        setTimeout(() => alertMsg.classList.add("hidden"), 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusText = document.getElementById('status-text');
+        const form = document.getElementById('paymentForm');
+
+        setTimeout(() => {
+            statusText.innerText = "Transferência concluída com sucesso! Liberando logística...";
+            statusText.classList.add("text-emerald-600", "font-bold");        
+            setTimeout(() => {
+                form.submit();
+            }, 2000);
+        }, 4500);
+    });
+</script>
+{% endblock %}
