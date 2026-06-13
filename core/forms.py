@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Obra
+from .models import Obra, Acordo
 
 class ObraForm(forms.ModelForm):
     class Meta:
@@ -17,7 +17,10 @@ class ObraForm(forms.ModelForm):
                 'class': 'w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition',
                 'placeholder': 'Ex: Alvenaria, Madeira, Metal'
             }),
-            'endereco': forms.TextInput(attrs={'class': 'w-full p-3 border rounded-lg', 'placeholder': 'Rua, Número, Cidade'}),
+            'endereco': forms.TextInput(attrs={'class': 'w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition', 'placeholder': 'Rua e Número'}),
+            'bairro': forms.TextInput(attrs={'class': 'w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition', 'placeholder': 'Bairro'}),
+            'cidade': forms.TextInput(attrs={'class': 'w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition', 'placeholder': 'Cidade'}),
+            'estado': forms.TextInput(attrs={'class': 'w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition', 'placeholder': 'Ex: PE'}),
             'latitude': forms.HiddenInput(),
             'longitude': forms.HiddenInput(),
         }
@@ -41,5 +44,13 @@ class CadastroForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            if field_name != 'tipo_usuario': # Impede de sobrescrever a classe do select
+            if field_name != 'tipo_usuario':
                 field.widget.attrs['class'] = 'w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition mt-1'
+
+class FormaPagamentoForm(forms.ModelForm):
+    class Meta:
+        model = Acordo
+        fields = ['forma_pagamento']
+        widgets = {
+            'forma_pagamento': forms.Select(attrs={'class': 'w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white'})
+        }
