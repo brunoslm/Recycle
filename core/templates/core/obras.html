@@ -41,8 +41,12 @@
         
         <div class="space-y-4">
             {% for obra in obras %}
-            <div class="p-5 border border-slate-200 bg-slate-50 rounded-lg flex flex-col gap-3 hover:shadow-md hover:border-emerald-400 transition cursor-pointer group"
-                 onclick="focusObra('{{ obra.latitude|default_if_none:"None" }}', '{{ obra.longitude|default_if_none:"None" }}')">
+            <div class="obra-card p-5 border border-slate-200 bg-slate-50 rounded-lg flex flex-col gap-3 hover:shadow-md hover:border-emerald-400 transition cursor-pointer group"
+                 data-lat="{{ obra.latitude|unlocalize }}"
+                 data-lng="{{ obra.longitude|unlocalize }}"
+                 data-residuo="{{ obra.tipo_residuo|escapejs }}"
+                 data-url="{% url 'detalhe_obra' obra.id %}"
+                 onclick="focusObra('{{ obra.latitude|unlocalize }}', '{{ obra.longitude|unlocalize }}')">
                 
                 <div>
                     <p class="font-bold text-lg text-slate-800 group-hover:text-emerald-700 transition line-clamp-2">{{ obra.descricao }}</p>
@@ -98,23 +102,26 @@
         let bounds = [];
         let hasMarkers = false;
 
-        {% for obra in obras %}
-            {% if obra.latitude and obra.longitude %}
-                {
-                    let latStr = "{{ obra.latitude }}".replace(',', '.');
-                    let lngStr = "{{ obra.longitude }}".replace(',', '.');
-                    let lat = parseFloat(latStr);
-                    let lng = parseFloat(lngStr);
-                    
-                    if (!isNaN(lat) && !isNaN(lng)) {
-                        hasMarkers = true;
-                        let marker = L.marker([lat, lng], {icon: emeraldIcon}).addTo(map);
-                        marker.bindPopup(`<div class="p-1"><strong>{{ obra.tipo_residuo|escapejs }}</strong><br><a href="{% url 'detalhe_obra' obra.id %}" class="text-emerald-600 font-bold hover:underline">Ver Detalhes</a></div>`);
-                        bounds.push([lat, lng]);
-                    }
+        // O JavaScript agora lê os cards renderizados no HTML de forma nativa e mapeia os pinos
+        const cards = document.querySelectorAll('.obra-card');
+        cards.forEach(card => {
+            let latStr = card.getAttribute('data-lat');
+            let lngStr = card.getAttribute('data-lng');
+            let residuo = card.getAttribute('data-residuo');
+            let url = card.getAttribute('data-url');
+
+            if (latStr && lngStr && latStr !== 'None' && lngStr !== 'None') {
+                let lat = parseFloat(latStr.replace(',', '.'));
+                let lng = parseFloat(lngStr.replace(',', '.'));
+                
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    hasMarkers = true;
+                    let marker = L.marker([lat, lng], {icon: emeraldIcon}).addTo(map);
+                    marker.bindPopup(`<div class="p-1"><strong>${residuo}</strong><br><a href="${url}" class="text-emerald-600 font-bold hover:underline">Ver Detalhes</a></div>`);
+                    bounds.push([lat, lng]);
                 }
-            {% endif %}
-        {% endfor %}
+            }
+        });
 
         if (hasMarkers && bounds.length > 0) {
             map.fitBounds(bounds, {padding: [50, 50]});
