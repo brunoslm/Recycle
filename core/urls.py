@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('nova-obra/', views.cadastrar_obra, name='cadastrar_obra'),
     path('painel/', views.painel, name='painel'),
+    path('vendedor/<int:id>/', views.perfil_vendedor, name='perfil_vendedor'),
     
     # Rotas de Negociação e Detalhes
     path('obras/', views.lista_obras, name='lista_obras'),
@@ -21,6 +22,7 @@ urlpatterns = [
     
     # Comprovante
     path('comprovante/<str:token>/', views.comprovante, name='comprovante'),
+    path('acordo/<int:id>/avaliar/', views.avaliar_acordo, name='avaliar_acordo'),
     
     # Rotas de Autenticação
     path('entrar/', auth_views.LoginView.as_view(template_name='core/login.html'), name='login'),
