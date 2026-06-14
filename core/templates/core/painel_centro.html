@@ -14,7 +14,7 @@
         <div class="p-5 border border-slate-200 bg-slate-50 rounded-xl hover:shadow-md transition flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <p class="font-bold text-lg text-slate-800 mb-1">{{ acordo.obra.descricao }}</p>
-                <p class="text-sm text-slate-600">Vendedor (Gerador): <span class="font-semibold">{{ acordo.obra.gerador.username }}</span></p>
+                <p class="text-sm text-slate-600">Vendedor (Gerador): <a href="{% url 'perfil_vendedor' acordo.obra.gerador.id %}" class="font-bold text-emerald-600 hover:text-emerald-700 hover:underline">{{ acordo.obra.gerador.username }}</a></p>
                 <p class="text-sm text-slate-600 mt-1">Oferta de Compra: <span class="font-bold text-emerald-600">R$ {{ acordo.valor_transporte }}</span></p>
             </div>
             
