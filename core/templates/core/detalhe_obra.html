@@ -6,12 +6,23 @@
         <div class="flex justify-between items-start">
             <div>
                 <h1 class="text-3xl font-bold text-slate-800 mb-2">{{ obra.descricao }}</h1>
-                <p class="text-slate-500">Publicado por: <span class="font-semibold text-slate-700">{{ obra.gerador.username }}</span></p>
+                <div class="text-sm text-slate-500 flex flex-wrap items-center gap-2">
+                    <span>Vendedor:</span> 
+                    <a href="{% url 'perfil_vendedor' obra.gerador.id %}" class="font-bold text-emerald-600 hover:text-emerald-700 hover:underline">{{ obra.gerador.username }}</a>
+                    <span class="text-amber-500 font-bold ml-1">⭐ {{ obra.gerador.perfil.media_avaliacao }}</span>
+                    <span class="text-xs text-slate-400">({{ obra.gerador.perfil.total_transacoes }} vendas concluídas)</span>
+                </div>
             </div>
             <span class="bg-emerald-100 text-emerald-800 py-1 px-4 rounded-full font-bold">
                 {{ obra.get_status_display }}
             </span>
         </div>
+        
+        {% if obra.imagem %}
+        <div class="mt-6 rounded-xl overflow-hidden max-h-72 border border-slate-200 shadow-sm">
+            <img src="{{ obra.imagem.url }}" alt="Foto do material" class="w-full h-full object-cover">
+        </div>
+        {% endif %}
         
         <div class="mt-6 pt-6 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
@@ -53,7 +64,6 @@
                 </div>
                 
                 <div class="flex flex-wrap gap-2 w-full md:w-auto">
-                    {# AÇÕES DO PEQUENO GERADOR (VENDEDOR) #}
                     {% if request.user == obra.gerador %}
                         {% if proposta.status == 'PROPOSTA' %}
                             <a href="{% url 'responder_proposta' proposta.id 'aceitar' %}" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm text-center">Aceitar Oferta de Compra</a>
@@ -70,14 +80,12 @@
                         {% endif %}
                     {% endif %}
 
-                    {# AÇÕES DO CENTRO DE RECICLAGEM (COMPRADOR) #}
                     {% if request.user == proposta.centro %}
                         {% if proposta.status == 'PROPOSTA' %}
                             <span class="text-sm text-slate-500 bg-slate-100 px-3 py-1.5 rounded-md border border-slate-200">Sua proposta está sob análise do gerador</span>
                         {% elif proposta.status == 'ACEITO' %}
                             <a href="{% url 'escolher_pagamento' proposta.id %}" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm text-center shadow-md">💳 Realizar Pagamento</a>
                         {% elif proposta.status == 'AGUARDANDO_VALIDACAO' %}
-                            {# BOTÃO ATUALIZADO COM CORES CORRIGIDAS PARA ALTO CONTRASTE #}
                             <a href="{% url 'simular_pagamento_online' proposta.id %}" class="flex items-center justify-center gap-2 w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2 px-4 rounded-lg transition text-sm text-center shadow-md border border-amber-300">
                                 <span>⚡</span> <span>Concluir PIX</span>
                             </a>
@@ -91,11 +99,17 @@
                         {% endif %}
                     {% endif %}
 
-                    {# COMPROVANTE #}
                     {% if proposta.status == 'CONCLUIDO' %}
-                    <a href="{% url 'comprovante' proposta.comprovante_token %}" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-4 rounded-lg transition text-center text-sm shadow-md">
-                        📄 Ver Comprovante
-                    </a>
+                    <div class="flex gap-2 w-full">
+                        <a href="{% url 'comprovante' proposta.comprovante_token %}" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-4 rounded-lg transition text-center text-sm shadow-md">
+                            📄 Ver Comprovante
+                        </a>
+                        {% if request.user == proposta.centro %}
+                        <a href="{% url 'avaliar_acordo' proposta.id %}" class="flex-1 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-2 px-4 rounded-lg transition text-center text-sm shadow-md border border-amber-300">
+                            ⭐ Avaliar Vendedor
+                        </a>
+                        {% endif %}
+                    </div>
                     {% endif %}
                 </div>
             </div>
