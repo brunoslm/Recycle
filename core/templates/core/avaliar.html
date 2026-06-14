@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl border border-slate-200 mt-10 shadow-xs">
+    <div class="mb-6 pb-6 border-b border-slate-100">
+        <h2 class="text-xl font-bold text-slate-900">Como estava o atendimento?</h2>
+        <p class="text-sm text-slate-500 mt-1">Avaliação para o vendedor: <strong class="text-slate-800">{{ avaliado.username }}</strong></p>
+    </div>
+
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        <div>
+            <div class="flex gap-1.5 py-1" id="star-container">
+                <button type="button" data-value="1" class="star-btn focus:outline-none cursor-pointer transition transform active:scale-95">
+                    <svg class="w-9 h-9 transition-colors duration-150" viewBox="0 0 24 24" style="fill: transparent; stroke: #e77600; stroke-width: 1.5;">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                </button>
+                <button type="button" data-value="2" class="star-btn focus:outline-none cursor-pointer transition transform active:scale-95">
+                    <svg class="w-9 h-9 transition-colors duration-150" viewBox="0 0 24 24" style="fill: transparent; stroke: #e77600; stroke-width: 1.5;">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                </button>
+                <button type="button" data-value="3" class="star-btn focus:outline-none cursor-pointer transition transform active:scale-95">
+                    <svg class="w-9 h-9 transition-colors duration-150" viewBox="0 0 24 24" style="fill: transparent; stroke: #e77600; stroke-width: 1.5;">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                </button>
+                <button type="button" data-value="4" class="star-btn focus:outline-none cursor-pointer transition transform active:scale-95">
+                    <svg class="w-9 h-9 transition-colors duration-150" viewBox="0 0 24 24" style="fill: transparent; stroke: #e77600; stroke-width: 1.5;">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                </button>
+                <button type="button" data-value="5" class="star-btn focus:outline-none cursor-pointer transition transform active:scale-95">
+                    <svg class="w-9 h-9 transition-colors duration-150" viewBox="0 0 24 24" style="fill: transparent; stroke: #e77600; stroke-width: 1.5;">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="hidden">
+                {{ form.nota }}
+            </div>
+        </div>
+        
+        <div class="space-y-1.5">
+            <label class="block text-base font-bold text-slate-900">Escrever uma avaliação</label>
+            {{ form.comentario }}
+        </div>
+
+        <div class="space-y-1.5">
+            <label class="block text-base font-bold text-slate-900">Dê um título à sua avaliação (obrigatório)</label>
+            {{ form.titulo }}
+        </div>
+
+        <div class="pt-4">
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md cursor-pointer text-center text-sm">
+                Enviar
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const stars = document.querySelectorAll('.star-btn');
+        const nativeSelect = document.querySelector('select[name="nota"]');
+        let selectedRating = nativeSelect ? parseInt(nativeSelect.value) || 0 : 0;
+
+        function highlightStars(rating) {
+            stars.forEach(star => {
+                const starValue = parseInt(star.getAttribute('data-value'));
+                const svg = star.querySelector('svg');
+                if (starValue <= rating) {
+                    svg.style.fill = '#ffd814';
+                } else {
+                    svg.style.fill = 'transparent';
+                }
+            });
+        }
+
+        if (selectedRating > 0) {
+            highlightStars(selectedRating);
+        }
+
+        stars.forEach(star => {
+            star.addEventListener('mouseenter', function() {
+                const hoverValue = parseInt(this.getAttribute('data-value'));
+                highlightStars(hoverValue);
+            });
+
+            star.addEventListener('mouseleave', function() {
+                highlightStars(selectedRating);
+            });
+
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.getAttribute('data-value'));
+                if (nativeSelect) {
+                    nativeSelect.value = selectedRating;
+                }
+                highlightStars(selectedRating);
+            });
+        });
+    });
+</script>
+{% endblock %}
