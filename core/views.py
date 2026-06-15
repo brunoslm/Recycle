@@ -1,12 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.db.models import Q
+<<<<<<< HEAD
 from django.contrib import messages  
 from django.db import IntegrityError 
 from .models import Obra, Acordo, Perfil
 from .forms import ObraForm, CadastroForm, FormaPagamentoForm
 from decimal import Decimal, InvalidOperation
+=======
+from .models import Obra, Acordo, Perfil, Avaliacao
+from .forms import ObraForm, CadastroForm, FormaPagamentoForm, AvaliacaoForm
+>>>>>>> da5e4e1f72e0220c94d4855c85c088227388352c
 import uuid
 
 def index(request):
@@ -16,7 +22,7 @@ def index(request):
 @login_required(login_url='login')
 def cadastrar_obra(request):
     if request.method == 'POST':
-        form = ObraForm(request.POST)
+        form = ObraForm(request.POST, request.FILES)
         if form.is_valid():
             obra = form.save(commit=False)
             obra.gerador = request.user
@@ -177,6 +183,32 @@ def comprovante(request, token):
     acordo = get_object_or_404(Acordo, comprovante_token=token, status='CONCLUIDO')
     return render(request, 'core/comprovante.html', {'acordo': acordo})
 
+@login_required(login_url='login')
+def avaliar_acordo(request, id):
+    acordo = get_object_or_404(Acordo, id=id, status='CONCLUIDO')
+    
+    if request.user != acordo.centro:
+        return redirect('painel')
+        
+    avaliado = acordo.obra.gerador
+    
+    if Avaliacao.objects.filter(acordo=acordo, avaliador=request.user).exists():
+        return redirect('comprovante', token=acordo.comprovante_token)
+        
+    if request.method == 'POST':
+        form = AvaliacaoForm(request.POST)
+        if form.is_valid():
+            avaliacao = form.save(commit=False)
+            avaliacao.acordo = acordo
+            avaliacao.avaliador = request.user
+            avaliacao.avaliado = avaliado
+            avaliacao.save()
+            return redirect('comprovante', token=acordo.comprovante_token)
+    else:
+        form = AvaliacaoForm()
+        
+    return render(request, 'core/avaliar.html', {'form': form, 'acordo': acordo, 'avaliado': avaliado})
+
 def cadastrar_usuario(request):
     if request.user.is_authenticated:
         return redirect('painel')
@@ -218,4 +250,13 @@ def lista_obras(request):
                 
         obras = obras.filter(filtro_geral).distinct()
 
+<<<<<<< HEAD
     return render(request, 'core/obras.html', {'obras': obras, 'query': query})
+=======
+    return render(request, 'core/obras.html', {'obras': obras, 'query': query})
+
+def perfil_vendedor(request, id):
+    vendedor = get_object_or_404(User, id=id)
+    avaliacoes = Avaliacao.objects.filter(avaliado=vendedor).order_by('-data_criacao')
+    return render(request, 'core/perfil_vendedor.html', {'vendedor': vendedor, 'avaliacoes': avaliacoes})
+>>>>>>> da5e4e1f72e0220c94d4855c85c088227388352c

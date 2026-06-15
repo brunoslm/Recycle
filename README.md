@@ -28,7 +28,7 @@ source venv/bin/activate
 *(Se der certo, você verá um `(venv)` no início da linha do seu terminal).*
 
 ### 2. Instalando as dependências do Django
-Com o ambiente ativado, instale todas as bibliotecas necessárias listadas no projeto:
+Com o ambiente ativado, certifique de estar na pasta Recycle e instale todas as bibliotecas necessárias listadas no projeto:
 ```bash
 pip install -r requirements.txt
 ```

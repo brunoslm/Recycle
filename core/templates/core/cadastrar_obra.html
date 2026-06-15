@@ -6,7 +6,7 @@
 
 <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-slate-200 mb-8">
     <h2 class="text-2xl font-bold mb-6 text-slate-800">Registrar Nova Obra</h2>
-    <form method="post" class="space-y-6">
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
         
         <div>
@@ -17,6 +17,11 @@
         <div>
             <label class="block text-sm font-semibold text-slate-700 mb-2">Tipo de Resíduo</label>
             {{ form.tipo_residuo }}
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Foto do Material (Opcional)</label>
+            {{ form.imagem }}
         </div>
 
         <div class="border-t border-slate-100 pt-6">
@@ -138,7 +143,6 @@
 
                     inputEndereco.focus();
                     
-                    // Busca inicial contendo o bairro para fechar o cerco na região correta
                     let queryInicial = `${data.logradouro} - ${data.bairro}, ${data.localidade} - ${data.uf}`;
                     let fallbackInicial = `${data.logradouro}, ${data.localidade} - ${data.uf}`;
                     
@@ -155,19 +159,15 @@
                 });
         }
 
-        // Quando o usuário terminar de digitar o número da casa
         inputEndereco.addEventListener('blur', function() {
             if(this.value && inputCidade.value) {
-                // Pega a rua com o número digitado + bairro + cidade + estado
                 let queryCompleta = `${this.value} - ${inputBairro.value}, ${inputCidade.value} - ${inputEstado.value}`;
-                // Fallback caso o OpenStreetMap não reconheça a demarcação exata daquele bairro
                 let fallbackCompleta = `${this.value}, ${inputCidade.value} - ${inputEstado.value}`;
                 
                 atualizarMapaPorTextoLivre(queryCompleta, fallbackCompleta);
             }
         });
 
-        // Modificado para aceitar um endereço alternativo (fallback) de segurança
         function atualizarMapaPorTextoLivre(enderecoTexto, fallbackTexto = null) {
             let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(enderecoTexto)}&limit=1`;
             
@@ -179,7 +179,6 @@
                 if (geoData.length > 0) {
                     posicionarPino(geoData[0].lat, geoData[0].lon);
                 } else if (fallbackTexto) {
-                    // Se falhar com o bairro, tenta a busca direta sem ele para garantir o posicionamento
                     atualizarMapaPorTextoLivre(fallbackTexto);
                 }
             });
