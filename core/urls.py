@@ -13,7 +13,7 @@ urlpatterns = [
     path('obra/<int:id>/', views.detalhe_obra, name='detalhe_obra'),
     path('obra/<int:id>/propor-acordo/', views.propor_acordo, name='propor_acordo'),
     
-    # Rotas do fluxo (BPMN do Figma)
+    # Rotas do fluxo
     path('acordo/<int:id>/responder/<str:acao>/', views.responder_proposta, name='responder_proposta'),
     path('acordo/<int:id>/pagamento/', views.escolher_pagamento, name='escolher_pagamento'),
     path('acordo/<int:id>/validar-pagamento/', views.simular_pagamento_online, name='simular_pagamento_online'),

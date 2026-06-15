@@ -46,10 +46,14 @@
         </div>
     </div>
     
-    <div class="mt-10 text-center">
-        <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-6 rounded-lg transition shadow-md print:hidden">
+    <div class="mt-10 flex justify-center gap-4 print:hidden">
+        <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-6 rounded-lg transition shadow-md cursor-pointer">
             Imprimir Comprovante
         </button>
+        <a href="{% url 'painel' %}" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-6 rounded-lg transition shadow-md">
+            Voltar ao Painel
+        </a>
     </div>
+
 </div>
 {% endblock %}
