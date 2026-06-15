@@ -2,8 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.db.models import Q
+from django.contrib import messages  
+from django.db import IntegrityError 
 from .models import Obra, Acordo, Perfil
 from .forms import ObraForm, CadastroForm, FormaPagamentoForm
+from decimal import Decimal, InvalidOperation
 import uuid
 
 def index(request):
@@ -45,16 +48,40 @@ def propor_acordo(request, id):
         return redirect('detalhe_obra', id=obra.id)
 
     if request.method == 'POST':
-        valor = request.POST.get('valor_transporte')
-        Acordo.objects.create(
-            obra=obra,
-            centro=request.user,
-            valor_transporte=valor,
-            status='PROPOSTA'
-        )
-        obra.status = 'EM_NEGOCIACAO'
-        obra.save()
-        return redirect('detalhe_obra', id=obra.id)
+        valor_raw = request.POST.get('valor_transporte')
+        
+        try:
+            valor_limpo = valor_raw.replace(',', '.')
+            valor_decimal = Decimal(valor_limpo)
+            
+            # Bloqueia propostas menores ou iguais a zero
+            if valor_decimal <= Decimal('0.00'):
+                messages.error(request, "Ei! O valor da proposta deve ser maior que zero.")
+                return render(request, 'core/propor_acordo.html', {'obra': obra})
+            
+            if valor_decimal > Decimal('9999999.99'):
+                messages.error(request, "Valor muito alto! Por favor, insira um valor realista de até R$ 9.999.999,99.")
+                return render(request, 'core/propor_acordo.html', {'obra': obra})
+                
+        except (InvalidOperation, ValueError, TypeError):
+            messages.error(request, "Por favor, insira um valor numérico válido.")
+            return render(request, 'core/propor_acordo.html', {'obra': obra})
+
+        try:
+            Acordo.objects.create(
+                obra=obra,
+                centro=request.user,
+                valor_transporte=valor_decimal,
+                status='PROPOSTA'
+            )
+            obra.status = 'EM_NEGOCIACAO'
+            obra.save()
+            messages.success(request, "Proposta enviada com sucesso!")
+            return redirect('detalhe_obra', id=obra.id)
+            
+        except IntegrityError:
+            messages.error(request, "Erro de integridade: O banco recusou esse valor.")
+            return render(request, 'core/propor_acordo.html', {'obra': obra})
         
     return render(request, 'core/propor_acordo.html', {'obra': obra})
 

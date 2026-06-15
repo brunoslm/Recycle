@@ -2,20 +2,64 @@
 
 {% block content %}
 <div class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-slate-200 mt-8">
+    <a href="#" class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 mb-2">
+        ← Voltar para a Obra
+    </a>
     <h2 class="text-2xl font-bold mb-2 text-slate-800">Enviar Proposta de Aquisição</h2>
-    <p class="text-slate-600 mb-6 pb-6 border-b border-slate-100">Obra: <span class="font-semibold">{{ obra.descricao }}</span></p>
+    <p class="text-slate-600 mb-6 pb-6 border-b border-slate-100">
+        Obra: <span class="font-semibold text-slate-800">{{ obra.descricao }}</span>
+    </p>
+
+    {# Correção do erro de sintaxe: Adicionado o {% if messages %} para abrir o bloco #}
+    {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for message in messages %}
+                <div class="p-4 rounded-lg text-sm font-bold {% if message.tags == 'error' %}bg-red-100 text-red-700 border border-red-200{% else %}bg-emerald-100 text-emerald-700 border border-emerald-200{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <form method="post" class="space-y-6">
         {% csrf_token %}
         
-        <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Valor da Proposta / Pagamento ao Gerador (R$)</label>
-            <input type="number" step="0.01" name="valor_transporte" class="w-full p-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition text-xl font-bold text-slate-800" placeholder="Ex: 150.00" required>
-            <p class="text-xs text-slate-500 mt-2">Informe o valor total que o seu Centro de Reciclagem pagará ao Gerador para comprar e retirar o lote de resíduos descrito.</p>
+        <div class="form-group">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">
+                Sua Oferta de Compra (R$)
+            </label>
+            
+            {# Correção do Layout: Div container agora é flex e alinha os itens no centro #}
+            <div class="w-full flex items-center border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-emerald-500 transition overflow-hidden bg-white">
+                
+                {# Caixa do "R$" centralizada verticalmente e horizontalmente com padding controlado #}
+                <div class="flex items-center justify-center border-r border-slate-300 px-4 h-full bg-slate-50">
+                    <span class="text-slate-500 font-bold text-xl">R$</span>
+                </div>
+                
+                {# O input herda a altura do container e herda a centralização vertical #}
+                {# Padding esquerdo removido pl-0 para encostar na caixa do R$ #}
+                <input 
+                    type="number" 
+                    step="0.01" 
+                    min="0.01" 
+                    name="valor_transporte" 
+                    class="flex-grow p-4 pl-0 border-none outline-none text-2xl font-bold text-slate-800 placeholder:text-slate-400 focus:ring-0" 
+                    placeholder="0.00" 
+                    required
+                >
+            </div>
+            
+            <p class="text-xs text-slate-500 mt-2">
+                Insira um valor realista maior que zero e menor que 10 milhões.
+            </p>
+            <p class="text-xs text-slate-500 mt-2">
+                Informe o valor total que o seu Centro de Reciclagem pagará ao Gerador para comprar e retirar o lote de resíduos descrito.
+            </p>
         </div>
 
         <div class="flex gap-4 pt-4">
-            <a href="{% url 'detalhe_obra' obra.id %}" class="w-1/3 text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-4 rounded-lg transition">
+            <a href="#" class="w-1/3 text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-4 rounded-lg transition">
                 Cancelar
             </a>
             <button type="submit" class="w-2/3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">
