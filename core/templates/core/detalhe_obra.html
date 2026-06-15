@@ -75,7 +75,7 @@
                         {% elif proposta.status == 'TRANSPORTE_LIBERADO' %}
                             <form method="post" action="{% url 'enviar_material' proposta.id %}" class="w-full">
                                 {% csrf_token %}
-                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm">Notificar Envio de Material</button>
+                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm cursor-pointer">Notificar Envio de Material</button>
                             </form>
                         {% endif %}
                     {% endif %}
@@ -94,7 +94,7 @@
                         {% elif proposta.status == 'EM_TRANSPORTE' %}
                             <form method="post" action="{% url 'recolher_material' proposta.id %}" class="w-full">
                                 {% csrf_token %}
-                                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm shadow-md">Confirmar Retirada e Entrega</button>
+                                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm shadow-md cursor-pointer">Confirmar Retirada e Entrega</button>
                             </form>
                         {% endif %}
                     {% endif %}
