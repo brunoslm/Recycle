@@ -99,6 +99,8 @@ def responder_proposta(request, id, acao):
     if acao == 'aceitar':
         acordo.status = 'ACEITO'
         acordo.save()
+        # Recusa as outras propostas pendentes
+        Acordo.objects.filter(obra=acordo.obra, status='PROPOSTA').exclude(id=acordo.id).update(status='RECUSADO')
         return redirect('painel')
     elif acao == 'recusar':
         acordo.status = 'RECUSADO'
