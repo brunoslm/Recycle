@@ -7,14 +7,17 @@
             <h1 class="text-3xl font-bold text-slate-800 mb-1">{{ vendedor.username }}</h1>
             <p class="text-slate-500 text-sm">Perfil do Vendedor / Gerador de Resíduos</p>
         </div>
-        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 flex gap-6 w-full sm:w-auto justify-around">
-            <div class="text-center">
+        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 flex w-full sm:w-auto justify-around items-center divide-x divide-slate-2">
+            <div class="text-center w-full px-4">
                 <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Reputação</p>
-                <p class="text-2xl font-black text-amber-500 mt-1">⭐ {{ vendedor.perfil.media_avaliacao }}</p>
+                <p class="text-2xl font-black text-amber-500 mt-1">
+                    <span class="text-xl">⭐</span>
+                    <span>{{ vendedor.perfil.media_avaliacao|default:5.0 }}</span>
+                </p>
             </div>
-            <div class="text-center border-l border-slate-200 pl-6">
+            <div class="text-center w-full px-4">
                 <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Vendas</p>
-                <p class="text-2xl font-black text-slate-800 mt-1">{{ vendedor.perfil.total_transacoes }}</p>
+                <p class="text-2xl font-black text-slate-800 mt-1">{{ vendedor.perfil.total_transacoes|default:0 }}</p>
             </div>
         </div>
     </div>

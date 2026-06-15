@@ -44,7 +44,7 @@
             <div class="obra-card p-5 border border-slate-200 bg-slate-50 rounded-lg flex flex-col gap-3 hover:shadow-md hover:border-emerald-400 transition cursor-pointer group"
                  data-lat="{{ obra.latitude|unlocalize }}"
                  data-lng="{{ obra.longitude|unlocalize }}"
-                 data-residuo="{{ obra.tipo_residuo|escapejs }}"
+                 data-residuo="{{ obra.descricao|escapejs }}"
                  data-url="{% url 'detalhe_obra' obra.id %}"
                  onclick="focusObra('{{ obra.latitude|unlocalize }}', '{{ obra.longitude|unlocalize }}')">
                 
@@ -117,7 +117,7 @@
                 if (!isNaN(lat) && !isNaN(lng)) {
                     hasMarkers = true;
                     let marker = L.marker([lat, lng], {icon: emeraldIcon}).addTo(map);
-                    marker.bindPopup(`<div class="p-1"><strong>${residuo}</strong><br><a href="${url}" class="text-emerald-600 font-bold hover:underline">Ver Detalhes</a></div>`);
+                    marker.bindPopup(`<div class="p-1 text-center"><strong>${residuo}</strong><br><a href="${url}" class="text-emerald-600 font-bold hover:underline">Ver Detalhes</a></div>`);
                     bounds.push([lat, lng]);
                 }
             }
