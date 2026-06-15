@@ -3,17 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.db.models import Q
-<<<<<<< HEAD
 from django.contrib import messages  
 from django.db import IntegrityError 
-from .models import Obra, Acordo, Perfil
-from .forms import ObraForm, CadastroForm, FormaPagamentoForm
 from decimal import Decimal, InvalidOperation
-=======
+import uuid
+
 from .models import Obra, Acordo, Perfil, Avaliacao
 from .forms import ObraForm, CadastroForm, FormaPagamentoForm, AvaliacaoForm
->>>>>>> da5e4e1f72e0220c94d4855c85c088227388352c
-import uuid
 
 def index(request):
     obras = Obra.objects.filter(status='ATIVO')
@@ -250,13 +246,9 @@ def lista_obras(request):
                 
         obras = obras.filter(filtro_geral).distinct()
 
-<<<<<<< HEAD
-    return render(request, 'core/obras.html', {'obras': obras, 'query': query})
-=======
     return render(request, 'core/obras.html', {'obras': obras, 'query': query})
 
 def perfil_vendedor(request, id):
     vendedor = get_object_or_404(User, id=id)
     avaliacoes = Avaliacao.objects.filter(avaliado=vendedor).order_by('-data_criacao')
     return render(request, 'core/perfil_vendedor.html', {'vendedor': vendedor, 'avaliacoes': avaliacoes})
->>>>>>> da5e4e1f72e0220c94d4855c85c088227388352c
