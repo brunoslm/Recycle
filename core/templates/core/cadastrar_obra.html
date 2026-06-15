@@ -21,7 +21,21 @@
 
         <div>
             <label class="block text-sm font-semibold text-slate-700 mb-2">Foto do Material (Opcional)</label>
-            {{ form.imagem }}
+            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors duration-200 group">
+                <div class="flex flex-col items-center justify-center pt-5">
+                    <svg class="w-8 h-8 mb-3 text-slate-400 group-hover:text-slate-500 transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                    </svg>
+                    <p id="upload-label-text" class="mb-1 text-sm text-slate-500 text-center">
+                        <span class="font-bold text-emerald-600 hover:text-emerald-700">Clique para enviar</span> ou arraste a foto
+                    </p>
+                    <p class="text-xs text-slate-400">PNG, JPG ou JPEG</p>
+                </div>
+                <div class="hidden">
+                    {{ form.imagem }}
+                </div>
+            </label>
+            <div id="file-name-preview" class="text-xs text-emerald-600 mt-2 font-medium hidden"></div>
         </div>
 
         <div class="border-t border-slate-100 pt-6">
@@ -57,7 +71,7 @@
             
             <div id="map-preview" class="w-full h-64 rounded-lg border border-slate-200 bg-slate-100 mb-2 z-0 relative"></div>
             <p id="geo-status" class="text-xs text-slate-500 font-semibold bg-slate-50 p-2 rounded border border-slate-100">
-                💡 O mapa busca o ponto real automaticamente. Se precisar ajustar, você pode <strong>clicar no mapa</strong> ou <strong>arrastar o pino</strong>.
+                💡 O mapa busca o ponto real automaticamente. Se precisar ajustar, você pode <strong>arrastar o pino</strong>.
             </p>
 
             <div class="hidden">
@@ -74,6 +88,34 @@
 </div>
 
 <script>
+    // Para dar feedback visual ao usuário quando a imagem for enviada
+    document.addEventListener("DOMContentLoaded", function() {
+        const fileInput = document.querySelector('input[type="file"]');
+        const preview = document.getElementById('file-name-preview');
+        const uploadLabelText = document.getElementById('upload-label-text');
+
+        if (fileInput) {
+            fileInput.classList.add('hidden');
+            
+            fileInput.addEventListener('change', function(e) {
+                if (this.files && this.files.length > 0) {
+                    const nomeArquivo = this.files[0].name;
+                    
+                    preview.classList.remove('hidden');
+                    
+                    if (uploadLabelText) {
+                        uploadLabelText.innerHTML = `<span class="font-bold text-emerald-600">Arquivo carregado com sucesso!</span><br><span class="text-xs text-slate-500">${nomeArquivo}</span>`;
+                    }
+                } else {
+                    preview.classList.add('hidden');
+                    if (uploadLabelText) {
+                        uploadLabelText.innerHTML = `<span class="font-bold text-emerald-600 hover:text-emerald-700">Clique para enviar</span> ou arraste a foto`;
+                    }
+                }
+            });
+        }
+    });
+
     let map, marker;
 
     function initPreviewMap() {

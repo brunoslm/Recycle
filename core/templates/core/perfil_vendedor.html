@@ -5,23 +5,33 @@
     <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-3xl font-bold text-slate-800 mb-1">{{ vendedor.username }}</h1>
-            <p class="text-slate-500 text-sm">Perfil do Vendedor / Gerador de Resíduos</p>
+            <p class="text-slate-500 text-sm">
+                {% if vendedor.perfil.tipo == 'CENTRO' %}
+                    Perfil do Centro / Captador de Resíduos
+                {% else %}
+                    Perfil do Vendedor / Gerador de Resíduos
+                {% endif %}
+            </p>
         </div>
         <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 flex w-full sm:w-auto justify-around items-center divide-x divide-slate-2">
-            <div class="text-center w-full px-4">
-                <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Reputação</p>
-                <p class="text-2xl font-black text-amber-500 mt-1">
-                    <span class="text-xl">⭐</span>
-                    <span>{{ vendedor.perfil.media_avaliacao|default:5.0 }}</span>
-                </p>
-            </div>
-            <div class="text-center w-full px-4">
-                <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Vendas</p>
-                <p class="text-2xl font-black text-slate-800 mt-1">{{ vendedor.perfil.total_transacoes|default:0 }}</p>
-            </div>
+            {% if vendedor.perfil.tipo == 'GERADOR' %}
+                <div class="text-center w-full px-4">
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Reputação</p>
+                    <p class="text-2xl font-black text-amber-500 mt-1">
+                        <span class="text-xl">⭐</span>
+                        <span>{{ vendedor.perfil.media_avaliacao|default:5.0 }}</span>
+                    </p>
+                </div>
+            {% endif %}
+                <div class="text-center w-full px-4">
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Vendas</p>
+                    <p class="text-2xl font-black text-slate-800 mt-1">{{ vendedor.perfil.total_transacoes|default:0 }}</p>
+                </div>
+
         </div>
     </div>
 
+    {% if vendedor.perfil.tipo == 'GERADOR' %}
     <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-xl font-bold text-slate-800 mb-6">Histórico de Avaliações</h2>
         
@@ -53,6 +63,7 @@
             {% endfor %}
         </div>
     </div>
+    {% endif %}
     
     <div class="mt-6">
         <a href="{% url 'lista_obras' %}" class="inline-block bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg transition text-sm">
