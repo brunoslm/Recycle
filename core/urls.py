@@ -28,4 +28,20 @@ urlpatterns = [
     path('entrar/', auth_views.LoginView.as_view(template_name='core/login.html'), name='login'),
     path('sair/', auth_views.LogoutView.as_view(), name='logout'),
     path('cadastrar/', views.cadastrar_usuario, name='cadastrar_usuario'),
+
+    # Rotas de Recuperação de Senha
+    path('recuperar-senha/', auth_views.PasswordResetView.as_view(
+        template_name='core/password_reset_form.html',
+        email_template_name='core/password_reset_email.html',
+        subject_template_name='core/password_reset_subject.txt'
+    ), name='password_reset'),
+    path('recuperar-senha/enviado/', auth_views.PasswordResetDoneView.as_view(
+        template_name='core/password_reset_done.html'
+    ), name='password_reset_done'),
+    path('recuperar-senha/confirmar/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name='core/password_reset_confirm.html'
+    ), name='password_reset_confirm'),
+    path('recuperar-senha/concluido/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='core/password_reset_complete.html'
+    ), name='password_reset_complete'),
 ]
