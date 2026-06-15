@@ -49,6 +49,9 @@ def propor_acordo(request, id):
     if request.user == obra.gerador:
         return redirect('detalhe_obra', id=obra.id)
 
+    if Acordo.objects.filter(obra=obra, centro=request.user, status='PROPOSTA').exists():
+        return redirect('detalhe_obra', id=obra.id)
+
     if request.method == 'POST':
         valor_raw = request.POST.get('valor_transporte')
         
@@ -58,11 +61,11 @@ def propor_acordo(request, id):
             
             # Bloqueia propostas menores ou iguais a zero
             if valor_decimal <= Decimal('0.00'):
-                messages.error(request, "Ei! O valor da proposta deve ser maior que zero.")
+                messages.error(request, "O valor da proposta deve ser maior que zero.")
                 return render(request, 'core/propor_acordo.html', {'obra': obra})
             
             if valor_decimal > Decimal('9999999.99'):
-                messages.error(request, "Valor muito alto! Por favor, insira um valor realista de até R$ 9.999.999,99.")
+                messages.error(request, "O valor inserido excede o limite máximo permitido.")
                 return render(request, 'core/propor_acordo.html', {'obra': obra})
                 
         except (InvalidOperation, ValueError, TypeError):
