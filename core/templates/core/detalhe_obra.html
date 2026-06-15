@@ -54,7 +54,9 @@
             {% for proposta in propostas %}
             <div class="p-5 border border-slate-200 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-50 gap-4">
                 <div>
-                    <p class="font-bold text-slate-800 text-lg">Centro: {{ proposta.centro.username }}</p>
+                    <a href="{% url 'perfil_vendedor' proposta.centro.id %}" class="block font-bold text-slate-800 text-lg hover:text-emerald-600 transition-colors duration-150 group">
+                        Centro: {{ proposta.centro.username }}
+                    </a>
                     <p class="text-xs text-slate-400 mt-1">Status Interno: <span class="font-semibold text-slate-600">{{ proposta.get_status_display }}</span></p>
                 </div>
                 
@@ -84,7 +86,7 @@
                         {% if proposta.status == 'PROPOSTA' %}
                             <span class="text-sm text-slate-500 bg-slate-100 px-3 py-1.5 rounded-md border border-slate-200">Sua proposta está sob análise do gerador</span>
                         {% elif proposta.status == 'ACEITO' %}
-                            <a href="{% url 'escolher_pagamento' proposta.id %}" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm text-center shadow-md">💳 Realizar Pagamento</a>
+                            <a href="{% url 'escolher_pagamento' proposta.id %}" class="w-full text-slate-800 hover:text-slate-900 font-bold py-2 px-4 rounded-lg transition text-sm text-center shadow-md">💳 Realizar Pagamento</a>
                         {% elif proposta.status == 'AGUARDANDO_VALIDACAO' %}
                             <a href="{% url 'simular_pagamento_online' proposta.id %}" class="flex items-center justify-center gap-2 w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2 px-4 rounded-lg transition text-sm text-center shadow-md border border-amber-300">
                                 <span>⚡</span> <span>Concluir PIX</span>
