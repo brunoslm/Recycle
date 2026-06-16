@@ -85,7 +85,7 @@ sudo docker compose up --build
 ```
 
 ### 3. Acesse a Aplicação
-Abra o seu navegador e acesse: [http://localhost:3000](http://localhost:3000) (substitua pela porta da sua aplicação).
+Abra o seu navegador e acesse: [http://localhost:3000](http://localhost:8000) (substitua pela porta da sua aplicação).
 
 ### 4. Como Parar a Aplicação
 Para interromper a execução dos containers sem perder seus dados, utilize:
