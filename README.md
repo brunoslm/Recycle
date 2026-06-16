@@ -101,6 +101,7 @@ sudo docker compose stop
 ```
 
 Para remover completamente os containers e volumes criados, utilize:
+
 **No Windows:**
 ```bash
 docker compose down
