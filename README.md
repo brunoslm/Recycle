@@ -15,13 +15,13 @@ As instruções abaixo irão dar uma cópia do projeto em execução na máquina
 
 ## 💻 Como Rodar com Máquina Local
 
-### 1. Clonando o Repositório
+### 1. Clone o Repositório
 Para clonar o repositório, utilize o comando:
 ```bash
 git clone https://github.com/brunoslm/Recycle.git
 ```
 
-### 2. Criando e Ativando o Ambiente Virtual (venv)
+### 2. Crie e Ative o Ambiente Virtual (venv)
 O ambiente virtual (`venv`) serve para isolar as bibliotecas do projeto e não bagunçar o seu computador.
 
 **No Windows:**
@@ -37,26 +37,26 @@ source venv/bin/activate
 ```
 *(Se der certo, você verá um `(venv)` no início da linha do seu terminal).*
 
-### 3. Acessando o Diretório
+### 3. Acesse o Diretório
 Entre na pasta do projeto com o comando:
 ```bash
 cd Recycle
 ```
 
-### 4. Instalando as Dependências do Django
+### 4. Instale as Dependências do Django
 Com o ambiente ativado, instale todas as bibliotecas necessárias listadas no projeto:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Configurando o Banco de Dados
+### 5. Configure o Banco de Dados
 Prepare o banco de dados e crie as tabelas necessárias rodando as migrações:
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 6. Rodando o Servidor
+### 6. Rode o Servidor
 Agora basta dar o play no servidor local do Django:
 ```bash
 python manage.py runserver
@@ -71,7 +71,7 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
 - Docker
 - Docker Compose
 
-### 2. Iniciando o Conteiner
+### 2. Inicie o Conteiner
 Após entrar na pasta do projeto, execute um dos comandos abaixo para realizar o build e iniciar a aplicação:
 
 **No Windows:**
@@ -110,4 +110,40 @@ docker compose down
 **No Linux/Mac:**
 ```bash
 sudo docker compose down
+```
+
+---
+
+## 📝 Testes Automatizados
+
+O projeto conta com testes automatizados para garantir a estabilidade das rotas e regras de negócio.
+A cobertura de código feita pelos testes pode ser verificada seguindo os passos abaixo:
+
+### 1. Prepare o Banco de Testes
+Antes de rodar os testes pela primeira vez (ou após criar novos modelos), certifique-se de que o banco de dados está atualizado:
+```bash
+python manage.py migrate
+```
+
+### 2. Execute os Testes (por Python)
+Para rodar a suíte de testes padrão do Django no app principal:
+```bash
+python manage.py test core
+```
+
+### 3. Como Verificar a Cobertura de Código (por Coverage)
+Para medir a porcentagem do código que está sendo testada, foi utilizada a biblioteca **coverage**.
+Se ainda não tiver instalado, instale via terminal:
+```bash
+pip install coverage
+```
+
+Execute os testes através do coverage para coletar os dados de análise:
+```bash
+coverage run manage.py test core
+```
+
+Para exibir o relatório de cobertura detalhado direto no terminal, rode:
+```bash
+coverage report
 ```
