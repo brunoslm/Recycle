@@ -2,6 +2,22 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto mt-6">
+    {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for message in messages %}
+                {% if message.tags == 'error' %}
+                    <div class="p-4 rounded-lg text-sm font-bold bg-red-100 text-red-700 border border-red-200">
+                        {{ message }}
+                    </div>
+                {% else %}
+                    <div class="p-4 rounded-lg text-sm font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                        {{ message }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200 mb-6">
         <div class="flex justify-between items-start">
             <div>
@@ -71,7 +87,7 @@
                     {% if request.user == obra.gerador %}
                         {% if proposta.status == 'PROPOSTA' %}
                             <a href="{% url 'responder_proposta' proposta.id 'aceitar' %}" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm text-center">Aceitar Oferta de Compra</a>
-                            <a href="{% url 'responder_proposta' proposta.id 'recusar' %}" class="inline-block text-white !text-white font-bold py-2 px-4 rounded-lg transition text-sm text-center shadow-sm cursor-pointer" style="background-color: #dc2626 !important;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Recusar</a>
+                            <a href="{% url 'responder_proposta' proposta.id 'recusar' %}" class="inline-block text-white font-bold py-2 px-4 rounded-lg transition text-sm text-center shadow-sm cursor-pointer" style="background-color: #dc2626;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Recusar</a>
                         {% elif proposta.status == 'ACEITO' %}
                             <span class="text-sm text-blue-600 font-medium bg-blue-50 px-3 py-1.5 rounded-md border border-blue-100">Aguardando pagamento do Centro...</span>
                         {% elif proposta.status == 'AGUARDANDO_VALIDACAO' %}
