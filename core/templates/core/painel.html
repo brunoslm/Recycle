@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="mb-8 flex justify-between items-center">
-    <div>
+<div class="mb-8 flex flex-wrap items-center justify-between gap-4 w-full">
+    <div class="flex-1 min-w-[250px]">
         <h1 class="text-3xl font-extrabold text-slate-800">Meu Painel</h1>
         <p class="text-slate-600 mt-1">Gerencie suas obras e materiais disponíveis para venda.</p>
     </div>
     
     {% if user.perfil.tipo == 'GERADOR' or not user.perfil %}
-    <a href="{% url 'cadastrar_obra' %}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg font-medium transition shadow-md flex items-center gap-2">
+    <a href="{% url 'cadastrar_obra' %}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg font-medium transition shadow-md flex items-center justify-center gap-2 whitespace-nowrap w-full md:w-auto">
         <span class="text-xl leading-none">+</span> Nova Obra
     </a>
     {% endif %}
@@ -26,10 +26,9 @@
                     {{ obra.tipo_residuo }}
                 </span>
             </div>
-            <div class="flex justify-between items-center pt-4 border-t border-slate-200 text-sm">
-                {# AJUSTADO: get_status_display para exibir o texto formatado do choices #}
+            <div class="flex items-center justify-between gap-4 pt-4 border-t border-slate-200 text-sm w-full">
                 <span class="text-slate-500">Status da Obra: <span class="text-emerald-600 font-bold">{{ obra.get_status_display }}</span></span>
-                <a href="{% url 'detalhe_obra' obra.id %}" class="text-emerald-600 font-medium hover:text-emerald-800 transition">Ver detalhes &rarr;</a>
+                <a href="{% url 'detalhe_obra' obra.id %}" class="text-emerald-600 font-medium hover:text-emerald-800 transition whitespace-nowrap self-end md:self-auto">Ver detalhes &rarr;</a>
             </div>
         </div>
         {% empty %}
