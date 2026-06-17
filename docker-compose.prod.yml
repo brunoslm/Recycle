@@ -1,0 +1,20 @@
+services:
+  web:
+    build:
+      context: .
+      target: production # para o estágio de prod do Dockerfile
+    # Em produção, rodamos o comando definitivo (Gunicorn/Uwsgi) definido no Dockerfile
+    restart: always
+    volumes:
+      - django_media:/app/media
+      - django_static:/app/static
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=0
+      - SECRET_KEY=UMA_CHAVE_SUPER_SECRETA_E_LONGA_DE_PRODUCAO
+      - ALLOWED_HOSTS=seu-dominio.com,localhost
+
+volumes:
+  django_media:
+  django_static:

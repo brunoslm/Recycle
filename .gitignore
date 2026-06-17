@@ -1,4 +1,8 @@
 tailwindcss
-tailwindcss
 db.sqlite3
 __pycache__/
+
+venv/
+media/
+static/
+staticfiles/
