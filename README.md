@@ -118,7 +118,7 @@ sudo docker compose down
 Para implantar a aplicação em ambiente de produção com otimizações ativadas, persistência dos dados e contêineres rodando em segundo plano, execute o comando abaixo na raiz do projeto:
 
 ```bash
-docker-compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 ---
