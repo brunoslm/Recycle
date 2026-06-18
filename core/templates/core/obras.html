@@ -5,26 +5,39 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<div class="mb-8">
+<div class="mb-8 ">
     <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Todas as Obras</h1>
     <p class="text-slate-500 mt-2 mb-6">Encontre e acompanhe as obras disponíveis para coleta.</p>
 
     <form method="GET" action="{% url 'lista_obras' %}" class="max-w-2xl">
-        <div class="relative flex items-center bg-white rounded-lg border border-slate-200 shadow-sm focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-emerald-500 overflow-hidden">
-            <div class="px-4 flex items-center justify-center text-slate-400">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+
+        <div class="space-y-6">
+            <div class="w-fit">
+                    {% if user.perfil.tipo == 'GERADOR' or not user.perfil %}
+                    <a href="{% url 'cadastrar_obra' %}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-lg font-medium transition shadow-md flex items-center justify-center gap-2 whitespace-nowrap w-full md:w-auto">
+                        <span class="text-xl leading-none">+</span> Nova Obra
+                    </a>
+                    {% endif %}
             </div>
-            
-            <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar por tipo de resíduo, endereço ou descrição..."
-                   class="flex-1 py-3 focus:outline-none text-slate-700 bg-transparent placeholder-slate-400 border-none ring-0">
-            
-            <div class="px-2">
-                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-md text-sm font-bold cursor-pointer transition">
-                    Buscar
-                </button>
+
+            <div class="relative flex items-center bg-white rounded-lg border border-slate-200 shadow-sm focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-emerald-500 overflow-hidden w-auto">
+                <div class="px-4 flex items-center justify-center text-slate-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                
+                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar por tipo de resíduo, endereço ou descrição..."
+                    class="flex-1 py-3 focus:outline-none text-slate-700 bg-transparent placeholder-slate-400 border-none ring-0">
+                
+                <div class="px-2">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-md text-sm font-bold cursor-pointer transition">
+                        Buscar
+                    </button>
+                </div>
+
             </div>
+
+
         </div>
-        
         {% if query %}
         <div class="mt-2 flex justify-between items-center px-1">
             <span class="text-sm text-slate-500">Resultados para: <strong class="text-slate-700">{{ query }}</strong></span>
