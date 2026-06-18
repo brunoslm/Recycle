@@ -41,5 +41,5 @@ USER djangouser
 EXPOSE 8000
 
 # Em produção, o ideal é usar um servidor WSGI como o Gunicorn, 
-# mas mantive o collectstatic + migrate inicial para o seu fluxo.
+# mas foi mantido o collectstatic + migrate inicial para o fluxo.
 CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn setup.wsgi:application --bind 0.0.0.0:8000"]

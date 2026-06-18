@@ -64,7 +64,7 @@ python manage.py runserver
 
 ---
 
-## 🐳 Como Rodar com Docker
+## 🐳 Como Rodar com Docker (Ambiente de Desenvolvimento)
 
 ### 1. Pré-Requisitos
 Antes de começar, certifique-se de ter instalado em sua máquina:
@@ -110,6 +110,15 @@ docker compose down
 **No Linux/Mac:**
 ```bash
 sudo docker compose down
+```
+
+---
+
+## 🐳 Como Rodar com Docker (Ambiente de Produção)
+Para implantar a aplicação em ambiente de produção com otimizações ativadas, persistência dos dados e contêineres rodando em segundo plano, execute o comando abaixo na raiz do projeto:
+
+```bash
+docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
 ---
