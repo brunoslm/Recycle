@@ -9,7 +9,7 @@ As instruções abaixo irão dar uma cópia do projeto em execução na máquina
   * **Leaflet.js:** Biblioteca interativa usada para renderizar o mapa na tela e manipular os pinos.
   * **ViaCEP:** API utilizada para autocompletar os campos de endereço (Rua, Bairro, Cidade, Estado) a partir do CEP digitado.
   * **Nominatim (OpenStreetMap):** A inteligência que transforma o texto do endereço em coordenadas geográficas (Latitude e Longitude).
-* **Banco de Dados:** SQLite (padrão do Django para desenvolvimento) ->> Depois vamos mudar para PostgreSQL
+* **Banco de Dados:** PostgreSQL
 
 ---
 
