@@ -8,6 +8,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recycle</title>
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <style>
+        @media (min-width: 768px) {
+            #nav-menu {
+                display: flex !important;
+            }
+        }
+
+        .footer-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-wrap {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+            }
+            .footer-text-align {
+                text-align: left !important;
+            }
+        }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
 <nav class="bg-emerald-600 p-4 text-white shadow-md">
@@ -19,7 +44,7 @@
                 <span>Recycle</span>
             </a>
         {% if user.is_authenticated %}
-        <button id="menu-btn" class="md:hidden text-white p-2 focus:outline-none">
+        <button id="menu-btn" class="text-white p-2 focus:outline-none">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
@@ -87,15 +112,21 @@
 
     <footer class="bg-slate-900 text-slate-400 py-8 mt-auto border-t-4 border-emerald-600">
         <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="footer-wrap">
                 
-                <div class="text-center md:text-left">
-                    <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
+                <div class="footer-text-align">
+                    <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: center;" class="md:justify-start mb-2">
                         <img src="{% static 'logo.svg' %}" alt="logo-Recycle" class="w-6 h-6">
                         <span class="text-xl font-bold text-white tracking-tight">Recycle</span>
                     </div>
                     <p class="text-sm text-slate-500">Marketplace de Logística Reversa &copy; 2026</p>
                     <p class="text-sm text-slate-500">Desenvolvido no <a href="https://portal.cin.ufpe.br/" target="_blank" rel="noopener noreferrer" class="font-semibold text-emerald-500 hover:text-emerald-400 hover:underline transition">CIn - UFPE</a></p>
+                </div>
+
+                <div style="display: flex; gap: 1rem; font-size: 0.75rem;" class="text-slate-500">
+                    <a href="{% url 'politica_privacidade' %}" class="hover:text-emerald-400 hover:underline transition">Política de Privacidade</a>
+                    <span>•</span>
+                    <a href="{% url 'termos_uso' %}" class="hover:text-emerald-400 hover:underline transition">Termos de Uso</a>
                 </div>
             </div>
         </div>
@@ -138,7 +169,7 @@
             <div>
                 <h4 class="font-bold text-sm">Controle de Privacidade</h4>
                 <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-                    Utilizamos cookies essenciais para garantir o funcionamento do painel de reciclagem e a segurança das suas transações de logística reversa.
+                    Utilizamos cookies essenciais para garantir o funcionamento do painel de reciclagem e a segurança das suas transações de logística reversa. Saiba mais na nossa <a href="{% url 'politica_privacidade' %}" class="text-emerald-500 hover:text-emerald-400 hover:underline font-semibold transition">Política de Privacidade</a>.
                 </p>
             </div>
         </div>
