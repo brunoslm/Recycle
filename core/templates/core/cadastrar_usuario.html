@@ -38,6 +38,14 @@
         </div>
         {% endfor %}
 
+        <div class="flex items-start gap-2 pt-2">
+            <input type="checkbox" id="aceitou_termos" name="aceitou_termos" required 
+                   class="w-4 h-4 mt-0.5 accent-emerald-600 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+            <label for="aceitou_termos" class="text-xs text-slate-600 leading-relaxed cursor-pointer select-none">
+                Li e concordo com a <a href="{% url 'politica_privacidade' %}" class="font-bold text-emerald-600 hover:text-emerald-700 hover:underline transition">Política de Privacidade</a> e os <a href="{% url 'termos_uso' %}" class="font-bold text-emerald-600 hover:text-emerald-700 hover:underline transition">Termos de Uso</a> para processamento de dados do Recycle.
+            </label>
+        </div>
+
         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg cursor-pointer transition shadow-md mt-6">
             Concluir Cadastro
         </button>
