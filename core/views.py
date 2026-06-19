@@ -257,3 +257,9 @@ def perfil_vendedor(request, id):
     vendedor = get_object_or_404(User, id=id)
     avaliacoes = Avaliacao.objects.filter(avaliado=vendedor).order_by('-data_criacao')
     return render(request, 'core/perfil_vendedor.html', {'vendedor': vendedor, 'avaliacoes': avaliacoes})
+
+def politica_privacidade(request):
+    return render(request, 'core/politica_privacidade.html')
+
+def termos_uso(request):
+    return render(request, 'core/termos_uso.html')
