@@ -107,6 +107,7 @@
     const desktopMenu = document.getElementById("desktop-menu");
 
     function atualizarMenu() {
+        if (!menuBtn || !desktopMenu) return; 
         if (window.innerWidth < 768) {
             menuBtn.style.display = "block";
             desktopMenu.style.display = "none";
@@ -118,12 +119,58 @@
     }
     atualizarMenu();
     window.addEventListener("resize", atualizarMenu);
-    menuBtn.addEventListener("click", () => {
-        if (mobileMenu.style.display === "flex") {
-            mobileMenu.style.display = "none";
-        } else {
-            mobileMenu.style.display = "flex";
+    
+    if (menuBtn) {
+        menuBtn.addEventListener("click", () => {
+            if (mobileMenu.style.display === "flex") {
+                mobileMenu.style.display = "none";
+            } else {
+                mobileMenu.style.display = "flex";
+            }
+        });
+    }
+</script>
+
+<div id="cookie-banner" style="bottom: 1rem; right: 1rem;" class="hidden fixed max-w-md bg-slate-900 text-white p-5 rounded-xl shadow-2xl border border-slate-800 z-50 transition-all duration-300">
+    <div class="flex flex-col gap-3">
+        <div class="flex items-start gap-2">
+            <span class="text-xl">🍪</span>
+            <div>
+                <h4 class="font-bold text-sm">Controle de Privacidade</h4>
+                <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                    Utilizamos cookies essenciais para garantir o funcionamento do painel de reciclagem e a segurança das suas transações de logística reversa.
+                </p>
+            </div>
+        </div>
+        <div class="flex justify-end gap-2 text-xs font-bold pt-1">
+            <button id="cookie-reject" class="px-3 py-2 text-slate-400 hover:text-white transition cursor-pointer">
+                Recusar
+            </button>
+            <button id="cookie-accept" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition shadow-md cursor-pointer">
+                Aceitar Cookies
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const banner = document.getElementById("cookie-banner");
+        const acceptBtn = document.getElementById("cookie-accept");
+        const rejectBtn = document.getElementById("cookie-reject");
+
+        if (!localStorage.getItem("cookies_accepted")) {
+            banner.classList.remove("hidden");
         }
+
+        acceptBtn.addEventListener("click", () => {
+            localStorage.setItem("cookies_accepted", "true");
+            banner.classList.add("hidden");
+        });
+
+        rejectBtn.addEventListener("click", () => {
+            banner.classList.add("hidden");
+        });
     });
 </script>
 
