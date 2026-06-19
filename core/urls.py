@@ -44,4 +44,8 @@ urlpatterns = [
     path('recuperar-senha/concluido/', auth_views.PasswordResetCompleteView.as_view(
         template_name='core/password_reset_complete.html'
     ), name='password_reset_complete'),
+
+    # LGPD
+    path('politica-privacidade/', views.politica_privacidade, name='politica_privacidade'),
+    path('termos-uso/', views.termos_uso, name='termos_uso'),
 ]
